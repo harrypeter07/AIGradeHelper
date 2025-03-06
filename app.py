@@ -28,16 +28,23 @@ except Exception as e:
     raise
 
 # Configure upload settings
-UPLOAD_FOLDER = '/tmp/uploads'
+UPLOAD_FOLDER = 'tmp/uploads'
 ALLOWED_EXTENSIONS = {'pdf'}
 
-if not os.path.exists(UPLOAD_FOLDER):
-    os.makedirs(UPLOAD_FOLDER)
-
+# Ensure upload directory exists
+os.makedirs(UPLOAD_FOLDER, exist_ok=True)
 app.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER
 
 def allowed_file(filename):
     return '.' in filename and filename.rsplit('.', 1)[1].lower() in ALLOWED_EXTENSIONS
+
+def clean_uploaded_file(filepath):
+    """Safely clean up uploaded file"""
+    try:
+        if os.path.exists(filepath):
+            os.remove(filepath)
+    except Exception as e:
+        logging.error(f"Error cleaning up file {filepath}: {e}")
 
 @app.route('/')
 def index():
@@ -45,30 +52,36 @@ def index():
 
 @app.route('/upload', methods=['POST'])
 def upload_files():
-    if 'student_assignment' not in request.files:
-        flash('Student assignment is required')
-        return redirect(url_for('index'))
-
-    student_file = request.files['student_assignment']
-
-    if student_file.filename == '':
-        flash('No selected file')
-        return redirect(url_for('index'))
-
-    if not allowed_file(student_file.filename):
-        flash('Invalid file type. Please upload PDF files only.')
-        return redirect(url_for('index'))
+    student_path = None
+    model_path = None
 
     try:
+        # Validate student assignment
+        if 'student_assignment' not in request.files:
+            flash('Student assignment is required')
+            return redirect(url_for('index'))
+
+        student_file = request.files['student_assignment']
+        if student_file.filename == '':
+            flash('No selected file')
+            return redirect(url_for('index'))
+
+        if not allowed_file(student_file.filename):
+            flash('Invalid file type. Please upload PDF files only.')
+            return redirect(url_for('index'))
+
         # Save and process student file
         student_filename = secure_filename(student_file.filename)
         student_path = os.path.join(app.config['UPLOAD_FOLDER'], student_filename)
         student_file.save(student_path)
+        logging.info(f"Saved student file: {student_path}")
 
         # Extract text from student PDF
         student_text = extract_text_from_pdf(student_path)
+        if not student_text.strip():
+            raise ValueError("Could not extract text from student PDF. The file might be empty or corrupted.")
 
-        # Check if model answer was provided
+        # Process model answer if provided
         model_text = None
         if 'model_answer' in request.files:
             model_file = request.files['model_answer']
@@ -76,23 +89,36 @@ def upload_files():
                 model_filename = secure_filename(model_file.filename)
                 model_path = os.path.join(app.config['UPLOAD_FOLDER'], model_filename)
                 model_file.save(model_path)
+                logging.info(f"Saved model answer file: {model_path}")
+
                 model_text = extract_text_from_pdf(model_path)
-                os.remove(model_path)
+                if not model_text.strip():
+                    raise ValueError("Could not extract text from model answer PDF. The file might be empty or corrupted.")
 
         # Grade the assignment
+        logging.info("Starting assignment grading")
         grade_result = grade_assignment(student_text, model_text)
+        logging.info("Completed assignment grading")
 
-        # Clean up files
-        os.remove(student_path)
+        if grade_result['score'] == 0 and 'error' in grade_result.get('feedback', '').lower():
+            raise ValueError(grade_result['feedback'])
 
         return render_template('results.html', 
                              score=grade_result['score'],
-                             feedback=grade_result['feedback'])
+                             feedback=grade_result['feedback'],
+                             sentiment=grade_result.get('sentiment', {'tone': 'neutral', 'confidence': 0.5}))
 
     except Exception as e:
         logging.error(f"Error processing files: {str(e)}")
-        flash('An error occurred while processing the files')
+        flash(f'Error processing files: {str(e)}')
         return redirect(url_for('index'))
+
+    finally:
+        # Clean up uploaded files
+        if student_path:
+            clean_uploaded_file(student_path)
+        if model_path:
+            clean_uploaded_file(model_path)
 
 if __name__ == '__main__':
     app.run(host='0.0.0.0', port=5000, debug=True)
