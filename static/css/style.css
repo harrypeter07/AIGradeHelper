@@ -47,6 +47,11 @@ h1, h2, h3, .navbar-brand {
     text-align: center;
     position: relative;
     transition: all 0.3s ease;
+    min-height: 120px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
 }
 
 .upload-box:hover {
@@ -62,6 +67,16 @@ h1, h2, h3, .navbar-brand {
 .upload-text {
     color: #5f6368;
     margin-bottom: 0;
+}
+
+.upload-box input[type="file"] {
+    opacity: 0;
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    cursor: pointer;
 }
 
 .btn-primary {
@@ -128,13 +143,20 @@ h1, h2, h3, .navbar-brand {
     .upload-container, .results-container {
         padding: 12px;
     }
-    
+
     .score-circle {
         width: 120px;
         height: 120px;
     }
-    
+
     .score-number {
         font-size: 36px;
     }
+}
+
+/* Add to existing CSS */
+.info-text {
+    color: #5f6368;
+    font-size: 0.875rem;
+    margin-top: -0.5rem;
 }

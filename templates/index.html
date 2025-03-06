@@ -5,10 +5,10 @@
     <div class="card">
         <div class="card-body">
             <h1 class="card-title text-center mb-4">Assignment Grading</h1>
-            
+
             <form action="{{ url_for('upload_files') }}" method="post" enctype="multipart/form-data">
                 <div class="mb-4">
-                    <label for="student_assignment" class="form-label">Student Assignment (PDF)</label>
+                    <label for="student_assignment" class="form-label">Student Assignment (PDF) *</label>
                     <div class="upload-box" id="student_upload_box">
                         <input type="file" class="form-control" id="student_assignment" name="student_assignment" accept=".pdf" required>
                         <div class="upload-icon">
@@ -23,9 +23,14 @@
                 </div>
 
                 <div class="mb-4">
-                    <label for="model_answer" class="form-label">Model Answer Sheet (PDF)</label>
+                    <label for="model_answer" class="form-label">Model Answer Sheet (PDF) - Optional</label>
+                    <div class="info-text mb-2">
+                        <small class="text-muted">
+                            If no model answer is provided, our AI will evaluate the assignment based on general academic criteria
+                        </small>
+                    </div>
                     <div class="upload-box" id="model_upload_box">
-                        <input type="file" class="form-control" id="model_answer" name="model_answer" accept=".pdf" required>
+                        <input type="file" class="form-control" id="model_answer" name="model_answer" accept=".pdf">
                         <div class="upload-icon">
                             <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                                 <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
@@ -33,7 +38,7 @@
                                 <line x1="12" y1="3" x2="12" y2="15"></line>
                             </svg>
                         </div>
-                        <p class="upload-text">Drag & drop or click to upload</p>
+                        <p class="upload-text">Drag & drop or click to upload (optional)</p>
                     </div>
                 </div>
 

@@ -34,47 +34,50 @@ def index():
 
 @app.route('/upload', methods=['POST'])
 def upload_files():
-    if 'student_assignment' not in request.files or 'model_answer' not in request.files:
-        flash('Both files are required')
+    if 'student_assignment' not in request.files:
+        flash('Student assignment is required')
         return redirect(url_for('index'))
-    
+
     student_file = request.files['student_assignment']
-    model_file = request.files['model_answer']
-    
-    if student_file.filename == '' or model_file.filename == '':
-        flash('No selected files')
+
+    if student_file.filename == '':
+        flash('No selected file')
         return redirect(url_for('index'))
-    
-    if not (allowed_file(student_file.filename) and allowed_file(model_file.filename)):
+
+    if not allowed_file(student_file.filename):
         flash('Invalid file type. Please upload PDF files only.')
         return redirect(url_for('index'))
-    
+
     try:
-        # Save and process files
+        # Save and process student file
         student_filename = secure_filename(student_file.filename)
-        model_filename = secure_filename(model_file.filename)
-        
         student_path = os.path.join(app.config['UPLOAD_FOLDER'], student_filename)
-        model_path = os.path.join(app.config['UPLOAD_FOLDER'], model_filename)
-        
         student_file.save(student_path)
-        model_file.save(model_path)
-        
-        # Extract text from PDFs
+
+        # Extract text from student PDF
         student_text = extract_text_from_pdf(student_path)
-        model_text = extract_text_from_pdf(model_path)
-        
+
+        # Check if model answer was provided
+        model_text = None
+        if 'model_answer' in request.files:
+            model_file = request.files['model_answer']
+            if model_file.filename != '' and allowed_file(model_file.filename):
+                model_filename = secure_filename(model_file.filename)
+                model_path = os.path.join(app.config['UPLOAD_FOLDER'], model_filename)
+                model_file.save(model_path)
+                model_text = extract_text_from_pdf(model_path)
+                os.remove(model_path)
+
         # Grade the assignment
         grade_result = grade_assignment(student_text, model_text)
-        
+
         # Clean up files
         os.remove(student_path)
-        os.remove(model_path)
-        
+
         return render_template('results.html', 
                              score=grade_result['score'],
                              feedback=grade_result['feedback'])
-    
+
     except Exception as e:
         logging.error(f"Error processing files: {str(e)}")
         flash('An error occurred while processing the files')
