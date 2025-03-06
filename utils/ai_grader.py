@@ -36,7 +36,8 @@ def grade_assignment(student_text, model_answer=None):
     Can work with or without model answer
     """
     try:
-        model = genai.GenerativeModel('gemini-pro')
+        # Initialize Gemini with the correct model name
+        model = genai.GenerativeModel('gemini-1.0-pro')
 
         if model_answer:
             prompt = f"""
