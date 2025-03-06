@@ -36,8 +36,22 @@ def grade_assignment(student_text, model_answer=None):
     Can work with or without model answer
     """
     try:
-        # Initialize Gemini with the correct model name
-        model = genai.GenerativeModel('gemini-1.0-pro')
+        # Get the list of available models
+        models = genai.list_models()
+        model_name = None
+
+        # Find the text model
+        for m in models:
+            if 'text' in m.supported_generation_methods:
+                model_name = m.name
+                break
+
+        if not model_name:
+            raise ValueError("No suitable text generation model found")
+
+        logging.info(f"Using model: {model_name}")
+        model = genai.GenerativeModel(model_name)
+        logging.info("Initialized Gemini model")
 
         if model_answer:
             prompt = f"""
@@ -75,8 +89,10 @@ def grade_assignment(student_text, model_answer=None):
             Begin your response with "Score: [number]" followed by your detailed feedback.
             """
 
+        logging.info("Sending request to Gemini API")
         response = model.generate_content(prompt)
         response_text = response.text
+        logging.info(f"Received response from Gemini API: {response_text[:100]}...")  # Log first 100 chars
 
         # Extract score from response
         score = extract_score_from_text(response_text)

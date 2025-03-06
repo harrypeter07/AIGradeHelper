@@ -13,8 +13,19 @@ app = Flask(__name__)
 app.secret_key = os.environ.get("SESSION_SECRET", "dev-secret-key")
 
 # Configure Gemini AI
-GOOGLE_API_KEY = os.environ.get("GOOGLE_API_KEY", "your-api-key")
-genai.configure(api_key=GOOGLE_API_KEY)
+GOOGLE_API_KEY = os.environ.get("GOOGLE_API_KEY")
+if not GOOGLE_API_KEY:
+    logging.error("GOOGLE_API_KEY not found in environment variables")
+    raise ValueError("GOOGLE_API_KEY is required")
+
+try:
+    genai.configure(api_key=GOOGLE_API_KEY)
+    # Verify configuration by listing available models
+    model_list = genai.list_models()
+    logging.info("Available models: %s", [m.name for m in model_list])
+except Exception as e:
+    logging.error(f"Error configuring Gemini AI: {str(e)}")
+    raise
 
 # Configure upload settings
 UPLOAD_FOLDER = '/tmp/uploads'
