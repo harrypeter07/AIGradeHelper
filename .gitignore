@@ -1,0 +1,45 @@
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+env/
+build/
+develop-eggs/
+dist/
+downloads/
+eggs/
+.eggs/
+lib/
+lib64/
+parts/
+sdist/
+var/
+wheels/
+*.egg-info/
+.installed.cfg
+*.egg
+
+# Virtual Environment
+venv/
+ENV/
+
+# Replit
+.replit/
+.breakpoints
+replit.nix
+.replit
+
+# IDE
+.idea/
+.vscode/
+*.swp
+*.swo
+
+# Uploaded files
+tmp/uploads/*
+!tmp/uploads/.gitkeep
+
+# Logs
+*.log
