@@ -1,0 +1,140 @@
+:root {
+    --google-blue: #4285F4;
+    --google-green: #34A853;
+    --google-yellow: #FBBC05;
+    --background-grey: #F8F9FA;
+    --text-dark: #202124;
+    --spacing: 24px;
+}
+
+body {
+    font-family: 'Roboto', sans-serif;
+    background-color: var(--background-grey);
+    color: var(--text-dark);
+}
+
+h1, h2, h3, .navbar-brand {
+    font-family: 'Google Sans', sans-serif;
+}
+
+.navbar {
+    background-color: white;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+}
+
+.navbar-brand {
+    color: var(--google-blue) !important;
+    font-weight: 500;
+}
+
+.card {
+    border-radius: 8px;
+    border: none;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+    margin-bottom: var(--spacing);
+}
+
+.upload-container {
+    max-width: 800px;
+    margin: 0 auto;
+    padding: var(--spacing);
+}
+
+.upload-box {
+    border: 2px dashed #dee2e6;
+    border-radius: 8px;
+    padding: var(--spacing);
+    text-align: center;
+    position: relative;
+    transition: all 0.3s ease;
+}
+
+.upload-box:hover {
+    border-color: var(--google-blue);
+    background-color: rgba(66, 133, 244, 0.05);
+}
+
+.upload-icon {
+    color: var(--google-blue);
+    margin-bottom: 12px;
+}
+
+.upload-text {
+    color: #5f6368;
+    margin-bottom: 0;
+}
+
+.btn-primary {
+    background-color: var(--google-blue);
+    border-color: var(--google-blue);
+    padding: 12px 24px;
+    font-family: 'Google Sans', sans-serif;
+}
+
+.btn-primary:hover {
+    background-color: #3367d6;
+    border-color: #3367d6;
+}
+
+.results-container {
+    max-width: 800px;
+    margin: 0 auto;
+    padding: var(--spacing);
+}
+
+.score-section {
+    text-align: center;
+}
+
+.score-circle {
+    width: 150px;
+    height: 150px;
+    border-radius: 50%;
+    background-color: var(--google-green);
+    color: white;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    margin: 0 auto;
+}
+
+.score-number {
+    font-size: 48px;
+    font-weight: bold;
+    line-height: 1;
+}
+
+.score-label {
+    font-size: 16px;
+    opacity: 0.9;
+}
+
+.feedback-section {
+    background-color: white;
+    padding: var(--spacing);
+    border-radius: 8px;
+    margin-top: var(--spacing);
+}
+
+.feedback-content {
+    white-space: pre-wrap;
+    font-size: 16px;
+    line-height: 1.6;
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+    .upload-container, .results-container {
+        padding: 12px;
+    }
+    
+    .score-circle {
+        width: 120px;
+        height: 120px;
+    }
+    
+    .score-number {
+        font-size: 36px;
+    }
+}

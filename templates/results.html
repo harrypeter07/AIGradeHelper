@@ -1,0 +1,30 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="results-container">
+    <div class="card">
+        <div class="card-body">
+            <h1 class="card-title text-center mb-4">Grading Results</h1>
+            
+            <div class="score-section mb-4">
+                <div class="score-circle" data-score="{{ score }}">
+                    <span class="score-number">{{ score }}</span>
+                    <span class="score-label">Score</span>
+                </div>
+            </div>
+
+            <div class="feedback-section">
+                <h2>Feedback</h2>
+                <div class="feedback-content">
+                    {{ feedback | safe }}
+                </div>
+            </div>
+
+            <div class="mt-4 text-center">
+                <a href="{{ url_for('index') }}" class="btn btn-secondary me-2">Grade Another Assignment</a>
+                <button class="btn btn-primary" onclick="window.print()">Download Report</button>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
