@@ -38,16 +38,7 @@ def grade_assignment(student_text, model_answer=None):
     try:
         # Get the list of available models
         models = genai.list_models()
-        model_name = None
-
-        # Find the text model
-        for m in models:
-            if 'text' in m.supported_generation_methods:
-                model_name = m.name
-                break
-
-        if not model_name:
-            raise ValueError("No suitable text generation model found")
+        model_name = 'gemini-1.5-pro'  # Use specific model version
 
         logging.info(f"Using model: {model_name}")
         model = genai.GenerativeModel(model_name)
